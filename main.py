@@ -1,5 +1,6 @@
 from flet import *
 
+
 def main(page: Page):
 
     logo_img = SafeArea(
