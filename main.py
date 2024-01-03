@@ -48,7 +48,7 @@ def main(page: Page):
         calendar_main()
         main_container.update()
 
-    def selected_date(e):
+    def open_date(e):
         if e.control.bgcolor == "#D41215":
             pass
         else:
@@ -57,9 +57,12 @@ def main(page: Page):
             time.sleep(0.1)
             e.control.bgcolor = colors.TRANSPARENT
             e.control.update()
-
-        day_num = e.control.data
-        print(day_num)
+        # day_num = e.control.data
+        page.session.set("day_num", e.control.data)
+        print(page.session.get("day_num"))
+        page.dialog = open_date_menu
+        open_date_menu.open = True
+        page.update()
 
     def touch(e):
         if e.control.bgcolor == "#D41215":
@@ -120,7 +123,7 @@ def main(page: Page):
                         is_current_day_bg = "#D41215"
 
                     day_button = Container(content=Text(str(display_day), weight=is_current_day_font, color="black", font_family="Golos Text"),
-                                           on_click=selected_date, on_hover=lambda e: touch(e), data=(
+                                           on_click=open_date, on_hover=lambda e: touch(e), data=(
                                            current_month, day, current_year),
                                            width=40, height=40, alignment=alignment.center,
                                            border_radius=border_radius.all(20),
@@ -134,6 +137,32 @@ def main(page: Page):
         calendar_container.content = calendar_column
         return calendar_container
 
+    day_num = page.session.get("day_num")
+
+    open_date_menu = AlertDialog(
+        content_padding=0,
+        # inset_padding=0,
+        actions_padding=0,
+        content=Container(
+            alignment=alignment.center,
+            blur=10,
+            border_radius=25,
+            expand=True,
+            gradient=LinearGradient(
+                begin=alignment.top_center,
+                end=alignment.bottom_center,
+                colors=["#E8D5DB", '#ff6666'],
+            ),
+            content=Column(
+                controls=[
+                    Text(day_num,
+                         size=25,
+                         color='black')
+                ]
+            )
+        )
+    )
+
     calendar_container = Container(
         blur=10,
         bgcolor=colors.BLACK12,
@@ -142,17 +171,22 @@ def main(page: Page):
 
     logo_img = SafeArea(
         Image(
-            src="/img/tany.png",
+            src="/img/tany_logo.png",
             width=300,
             height=150
         )
     )
 
     main_container = Container(
+        gradient=LinearGradient(
+            begin=alignment.top_center,
+            end=alignment.bottom_center,
+            colors=["#E8D5DB", '#ff6666']
+        ),
         expand=True,
         padding=15,
         alignment=alignment.center,
-        bgcolor="#E8D5DB",
+        # bgcolor="#E8D5DB",
         content=Column(
             horizontal_alignment='center',
             controls=[
