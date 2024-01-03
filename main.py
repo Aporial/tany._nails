@@ -4,6 +4,7 @@ import calendar
 import locale
 from calendar import HTMLCalendar
 from dateutil import relativedelta
+import time
 
 locale.setlocale(locale.LC_TIME, 'uk_UA')
 
@@ -48,8 +49,28 @@ def main(page: Page):
         main_container.update()
 
     def selected_date(e):
+        if e.control.bgcolor == "#D41215":
+            pass
+        else:
+            e.control.bgcolor = colors.WHITE24
+            e.control.update()
+            time.sleep(0.1)
+            e.control.bgcolor = colors.TRANSPARENT
+            e.control.update()
+
         day_num = e.control.data
         print(day_num)
+
+    def touch(e):
+        if e.control.bgcolor == "#D41215":
+            pass
+        else:
+            if e.data == "true":
+                e.control.bgcolor = colors.WHITE24
+                e.control.update()
+            else:
+                e.control.bgcolor = colors.TRANSPARENT
+                e.control.update()
 
     def calendar_main():
         current_month = page.session.get("current_month")
@@ -61,7 +82,7 @@ def main(page: Page):
         str_date = '{0} {1}, {2}'.format(
             formatted_month_name, current_day, current_year)
         date_display = Text(str_date, text_align='center',
-                            size=20, color="black")
+                            size=20, color="black", weight="w500", font_family="Golos Text")
         next_button = Container(
             Text('>', text_align='right', size=20, color="black"), on_click=get_next)
         div = Divider(height=1, thickness=1.0)
@@ -76,7 +97,8 @@ def main(page: Page):
         week_days_row = Row(alignment=MainAxisAlignment.CENTER)
         for day_name in weekday_name:
             week_days_row.controls.append(Container(
-                content=Text(day_name[:3], size=12, color="black"),
+                content=Text(day_name[:3], size=15, color="black",
+                             weight="w500", font_family="Golos Text"),
                 width=40, height=30, alignment=alignment.center,
                 border_radius=border_radius.all(0),
                 bgcolor=colors.TRANSPARENT
@@ -97,19 +119,20 @@ def main(page: Page):
                         is_current_day_font = FontWeight.BOLD
                         is_current_day_bg = "#D41215"
 
-                    day_button = Container(content=Text(str(display_day), weight=is_current_day_font, color="black"),
-                                           on_click=selected_date, data=(
+                    day_button = Container(content=Text(str(display_day), weight=is_current_day_font, color="black", font_family="Golos Text"),
+                                           on_click=selected_date, on_hover=lambda e: touch(e), data=(
                                            current_month, day, current_year),
-                                           width=40, height=40, ink=True, alignment=alignment.center,
-                                           border_radius=border_radius.all(15),
-                                           bgcolor=is_current_day_bg)
+                                           width=40, height=40, alignment=alignment.center,
+                                           border_radius=border_radius.all(20),
+                                           border=border.all(
+                                               2, is_current_day_bg))
                 else:
                     day_button = Container(
                         width=40, height=40, border_radius=border_radius.all(15))
                 week_row.controls.append(day_button)
             calendar_column.controls.append(week_row)
-            calendar_container.content = calendar_column
-            # return calendar_container
+        calendar_container.content = calendar_column
+        return calendar_container
 
     calendar_container = Container(
         blur=10,
@@ -127,6 +150,7 @@ def main(page: Page):
 
     main_container = Container(
         expand=True,
+        padding=15,
         alignment=alignment.center,
         bgcolor="#E8D5DB",
         content=Column(
@@ -138,6 +162,9 @@ def main(page: Page):
         )
     )
 
+    page.fonts = {
+        "Golos Text": "/fonts/GolosText.ttf"
+    }
     page.title = "tany._nails"
     page.window_width = 400
     page.window_height = 700
