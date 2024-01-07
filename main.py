@@ -137,8 +137,6 @@ def main(page: Page):
         calendar_container.content = calendar_column
         return calendar_container
 
-    day_num = page.session.get("day_num")
-
     open_date_menu = AlertDialog(
         content_padding=0,
         # inset_padding=0,
@@ -155,7 +153,7 @@ def main(page: Page):
             ),
             content=Column(
                 controls=[
-                    Text(day_num,
+                    Text("Кохаю Тетян!",
                          size=25,
                          color='black')
                 ]
